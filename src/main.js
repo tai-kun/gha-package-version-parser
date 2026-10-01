@@ -46,12 +46,11 @@ export function parsePackageVersion(input) {
 }
 
 function setOutput(name, value) {
+  process.stdout.write(`${name}=${value}\n`);
   const outputFile = process.env.GITHUB_OUTPUT;
   if (outputFile) {
     appendFileSync(outputFile, `${name}=${value}\n`);
-    return;
   }
-  process.stdout.write(`${name}=${value}\n`);
 }
 
 function setFailed(message) {

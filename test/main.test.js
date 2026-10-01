@@ -163,12 +163,31 @@ test("有効な入力で各出力を書き出す", () => {
     prerelease: "alpha.1",
     build: "build.123",
   });
+  assert.equal(
+    result.stdout,
+    [
+      "name=my-package",
+      "version=1.2.3-alpha.1",
+      "major=1",
+      "minor=2",
+      "patch=3",
+      "prerelease=alpha.1",
+      "build=build.123",
+      "",
+    ].join("\n"),
+  );
 });
 
 test("safe-parse が true なら無効入力でも空文字を出力して成功する", () => {
   const result = runAction({ packageInput: "not-a-version", safeParse: "true" });
   assert.equal(result.status, 0);
   assert.deepEqual(result.outputs, EMPTY_OUTPUTS);
+  assert.equal(
+    result.stdout,
+    Object.keys(EMPTY_OUTPUTS)
+      .map((name) => `${name}=`)
+      .join("\n") + "\n",
+  );
 });
 
 test("safe-parse が false なら無効入力で失敗する", () => {
