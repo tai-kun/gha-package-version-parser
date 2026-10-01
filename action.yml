@@ -1,0 +1,28 @@
+name: "gha-package-version-parser"
+description: "パッケージバージョン文字列を解析します。"
+inputs:
+  package:
+    description: "解析対象のパッケージバージョン文字列です。"
+    required: true
+  safe-parse:
+    description: "無効な文字列が入力されたときでもエラーで終了せずに出力値がすべて空文字列になります。"
+    required: false
+    default: "false"
+outputs:
+  name:
+    description: "パッケージの名前です。無い場合は `*` です。"
+  version:
+    description: "解析・検証済みの SemVer 文字列です。"
+  major:
+    description: "メジャーバージョンの値です。"
+  minor:
+    description: "マイナーバージョンの値です。"
+  patch:
+    description: "パッチバージョンの値です。"
+  prerelease:
+    description: "プレリリースの構成要素（結合済み）です。"
+  build:
+    description: "ビルドメタデータの構成要素（結合済み）です。"
+runs:
+  using: "node24"
+  main: "src/main.js"

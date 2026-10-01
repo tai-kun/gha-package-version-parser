@@ -1,0 +1,43 @@
+name: "リリース"
+run-name: "v${{ github.event.inputs.version }}"
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "バージョン（例:「1.2.3」「my-package@1.2.3」）"
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: "チェックアウト"
+        uses: actions/checkout@v7
+
+      - name: "mise セットアップ"
+        uses: jdx/mise-action@v5
+
+      - name: "依存関係のインストール"
+        run: pnpm install --frozen-lockfile
+
+      - name: "バージョン解析"
+        uses: ./
+        with:
+          package: ${{ github.event.inputs.version }}
+        id: pkg
+
+      - name: "タグ作成とリリースノート生成"
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ steps.pkg.outputs.version }}
+          PRERELEASE: ${{ steps.pkg.outputs.prerelease }}
+        run: |
+          args=(--title "v$VERSION" --generate-notes)
+          if [[ -n "$PRERELEASE" ]]; then
+            args+=(--prerelease)
+          fi
+          gh release create "v$VERSION" "${args[@]}"
